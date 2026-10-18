@@ -1,0 +1,6 @@
+artifact,type,repo_id,revision,note
+smolvla_libero,model,lerobot/smolvla_libero,,fill via HfApi().model_info(...).sha
+libero,dataset,lerobot/libero,,fill via HfApi().dataset_info(...).sha
+smolvlm2_backbone,model,HuggingFaceTB/SmolVLM2-500M-Video-Instruct,,checkpoint dependency
+libero_assets,dataset,lerobot/libero-assets,,LIBERO scene meshes
+lerobot,code,github.com/huggingface/lerobot,,pip editable install; record git rev-parse HEAD

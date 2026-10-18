@@ -182,7 +182,44 @@ done
 
 ---
 
-## 7. 致谢与许可
+## 7. 复现性
+
+### 使用的制品
+
+| 类型 | repo_id | 用途 |
+|---|---|---|
+| 策略 checkpoint | `lerobot/smolvla_libero` | 全部评测 |
+| 数据集 | `lerobot/libero` | 训练用（v3.0，1.9GB） |
+| VLM 骨干 | `HuggingFaceTB/SmolVLM2-500M-Video-Instruct` | checkpoint 依赖 |
+| 仿真资源 | `lerobot/libero-assets` | LIBERO 场景网格 |
+
+### 钉住版本
+
+**本次运行未在实验时记录 commit sha**（运行环境已释放，事后无法回查）。复现时请先获取并固定：
+
+```bash
+python -c "
+from huggingface_hub import HfApi
+a = HfApi()
+print('model  ', a.model_info('lerobot/smolvla_libero').sha)
+print('dataset', a.dataset_info('lerobot/libero').sha)
+"
+```
+
+拿到后：
+
+- 记入 `results/revisions.csv`
+- 评测时通过 `--policy.revision=<sha>` 与 `--dataset.revision=<sha>` 固定
+
+### 评测确定性
+
+- `seed` 默认 1000，同时用于训练与评测环境
+- LIBERO 使用固定初始状态（`--env.init_states=true`），因此**同一配置下的评测是确定性的**，不同 `n_action_steps` 之间可逐 episode 配对（这是本文使用 McNemar 检验的前提）
+- 每个配置 100 episodes（10 任务 × 10 episodes）
+
+---
+
+## 8. 致谢与许可
 
 - 模型与框架：[Hugging Face LeRobot](https://github.com/huggingface/lerobot)、[SmolVLA](https://arxiv.org/abs/2506.01844)
 - 仿真基准：[LIBERO](https://github.com/Lifelong-Robot-Learning/LIBERO)
