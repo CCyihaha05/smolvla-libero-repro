@@ -1,0 +1,26 @@
+# LeRobot outputs
+outputs/
+wandb/
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.ipynb_checkpoints/
+
+# Datasets / model weights (too large; not redistributed)
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/

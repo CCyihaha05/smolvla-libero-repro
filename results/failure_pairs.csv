@@ -1,0 +1,12 @@
+pair_id,task_id,object,n10_trajectory,n50_failure_mode,label,label_secondary
+object_t03_ep03,3,bbq sauce,aligned -> close -> lift -> move,misaligned; closed on air; moved to basket,localization_error,
+object_t03_ep04,3,bbq sauce,misaligned -> retry -> grasp,repeated grasping at same position,localization_error,
+object_t03_ep07,3,bbq sauce,misaligned -> retry -> grasp,aligned but slipped during lift,grasp_slip,
+object_t03_ep08,3,bbq sauce,misaligned -> retry -> grasp,repeated grasping at same position,localization_error,
+object_t03_ep09,3,bbq sauce,misaligned -> lift -> side-shift -> grasp,side-shift then repeated grasping,action_lag,
+object_t00_ep02,0,alphabet soup,aligned -> close -> lift,collision; no grasp; moved to basket; kept closing on air,localization_error,action_lag
+object_t00_ep04,0,alphabet soup,aligned -> close -> lift,collision; no grasp; moved to basket; kept closing on air,localization_error,action_lag
+object_t00_ep05,0,alphabet soup,aligned -> close -> lift,collision; moved to basket; grasped the basket itself,localization_error,action_lag
+object_t00_ep09,0,alphabet soup,aligned -> close -> lift,collision; no grasp; moved to basket; kept closing on air,localization_error,action_lag
+object_t06_ep00,6,butter,aligned -> close -> lift,not fully aligned; lifted; moved to basket; grasped another can,localization_error,
+object_t06_ep04,6,butter,aligned -> close -> lift,not fully aligned; repeated grasping,localization_error,action_lag

@@ -1,0 +1,6 @@
+suite,n_success,n_episodes,success_rate,ci95_low,ci95_high,paper_success_rate,diff_vs_paper
+libero_spatial,82,100,82.0,73.33,88.30,90,-8.0
+libero_object,88,100,88.0,80.19,93.00,96,-8.0
+libero_goal,87,100,87.0,79.00,92.20,92,-5.0
+libero_10,70,100,70.0,60.40,78.10,71,-1.0
+average,,,,81.75,,,87.3,-5.55

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>A3 · N=10 成功 vs N=50 失败 对照</title>
+<style>
+  :root { --bg:#111; --fg:#eee; --muted:#888; --accent:#4ea1ff; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+         font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; }
+  header { padding:14px 20px; display:flex; gap:14px; align-items:center;
+           border-bottom:1px solid #222; position:sticky; top:0; background:var(--bg); z-index:10; }
+  select, button { font-size:14px; padding:8px 12px; border-radius:8px;
+                   border:1px solid #333; background:#1b1b1b; color:var(--fg); cursor:pointer; }
+  button:hover, select:hover { border-color:var(--accent); }
+  #pairId { font-weight:700; font-size:16px; color:var(--accent); }
+  #counter { color:var(--muted); font-size:13px; }
+  .wrap { display:grid; grid-template-columns:1fr 1fr; gap:14px; padding:16px 20px 24px; }
+  .col h2 { font-size:14px; margin:0 0 8px; font-weight:600; }
+  .ok h2 { color:#4ade80; }
+  .fail h2 { color:#f87171; }
+  video { width:100%; background:#000; border-radius:10px; border:1px solid #2a2a2a; }
+  .hint { padding:0 20px 20px; color:var(--muted); font-size:13px; line-height:1.7; }
+  kbd { background:#222; border:1px solid #3a3a3a; border-radius:4px; padding:1px 6px; font-size:12px; }
+</style>
+</head>
+<body>
+
+<header>
+  <button id="prev">← 上一对</button>
+  <select id="picker"></select>
+  <button id="next">下一对 →</button>
+  <span id="pairId"></span>
+  <span id="counter"></span>
+  <button id="sync">同步播放 / 暂停</button>
+  <button id="restart">重播</button>
+</header>
+
+<div class="wrap">
+  <div class="col ok">
+    <h2>N=10 · 成功（对照组）</h2>
+    <video id="v10" controls playsinline></video>
+  </div>
+  <div class="col fail">
+    <h2>N=50 · 失败（实验组）</h2>
+    <video id="v50" controls playsinline></video>
+  </div>
+</div>
+
+<div class="hint">
+  快捷键：<kbd>←</kbd> / <kbd>→</kbd> 切换配对，<kbd>空格</kbd> 同步播放/暂停，<kbd>R</kbd> 重播。
+  两侧是<strong>同一任务、同一 episode 编号 = 同一初始状态</strong>，唯一差别是 <code>n_action_steps</code>。
+  建议先把两个视频都拖到关键帧，再逐帧对比。
+</div>
+
+<script>
+// 按退化幅度排序：object_t03 优先，其次 object_t00/t06/t09，再 spatial 高退化任务
+const PAIRS = [
+  "object_t03_ep03","object_t03_ep04","object_t03_ep07","object_t03_ep08","object_t03_ep09",
+  "object_t00_ep02","object_t00_ep04","object_t00_ep05","object_t00_ep09",
+  "object_t06_ep00","object_t06_ep04","object_t06_ep06","object_t06_ep09",
+  "object_t09_ep00","object_t09_ep02","object_t09_ep03","object_t09_ep07",
+  "spatial_t07_ep00","spatial_t07_ep03","spatial_t07_ep05","spatial_t07_ep09",
+  "spatial_t08_ep05","spatial_t08_ep06","spatial_t08_ep09",
+  "spatial_t04_ep04","spatial_t04_ep06",
+  "spatial_t03_ep05","spatial_t03_ep06","spatial_t03_ep07",
+  "object_t08_ep00","object_t08_ep01","object_t08_ep04",
+  "object_t05_ep02","object_t05_ep05","object_t05_ep06",
+  "object_t01_ep00","object_t01_ep06",
+  "object_t02_ep01","object_t02_ep08",
+  "object_t04_ep04","object_t04_ep06",
+  "object_t07_ep03","object_t07_ep05",
+  "spatial_t01_ep07","spatial_t02_ep01","spatial_t02_ep08",
+  "spatial_t05_ep07","spatial_t06_ep00","spatial_t06_ep02","spatial_t09_ep05"
+];
+
+const picker = document.getElementById('picker');
+const v10 = document.getElementById('v10');
+const v50 = document.getElementById('v50');
+const pairId = document.getElementById('pairId');
+const counter = document.getElementById('counter');
+let idx = 0;
+
+PAIRS.forEach((p, i) => {
+  const o = document.createElement('option');
+  o.value = i; o.textContent = p;
+  picker.appendChild(o);
+});
+
+function load(i) {
+  idx = (i + PAIRS.length) % PAIRS.length;
+  const p = PAIRS[idx];
+  v10.src = `${p}_N10_OK.mp4`;
+  v50.src = `${p}_N50_FAIL.mp4`;
+  v10.load(); v50.load();
+  pairId.textContent = p;
+  counter.textContent = `${idx + 1} / ${PAIRS.length}`;
+  picker.value = idx;
+}
+function playBoth() {
+  if (v10.paused) { v10.play(); v50.play(); }
+  else { v10.pause(); v50.pause(); }
+}
+function restart() {
+  v10.currentTime = 0; v50.currentTime = 0;
+  v10.play(); v50.play();
+}
+
+document.getElementById('prev').onclick = () => load(idx - 1);
+document.getElementById('next').onclick = () => load(idx + 1);
+document.getElementById('sync').onclick = playBoth;
+document.getElementById('restart').onclick = restart;
+picker.onchange = e => load(+e.target.value);
+
+// 保持两侧进度同步（拖动一侧时另一侧跟随）
+v10.addEventListener('seeked', () => { v50.currentTime = v10.currentTime; });
+v50.addEventListener('seeked', () => { v10.currentTime = v50.currentTime; });
+
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'SELECT') return;
+  if (e.key === 'ArrowLeft') { load(idx - 1); e.preventDefault(); }
+  if (e.key === 'ArrowRight') { load(idx + 1); e.preventDefault(); }
+  if (e.key === ' ') { playBoth(); e.preventDefault(); }
+  if (e.key === 'r' || e.key === 'R') { restart(); e.preventDefault(); }
+});
+
+load(0);
+</script>
+</body>
+</html>

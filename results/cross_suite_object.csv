@@ -1,0 +1,5 @@
+suite,n_action_steps,n_success,n_episodes,success_rate,ci95_low,ci95_high
+libero_spatial,10,82,100,82.0,73.33,88.30
+libero_spatial,50,64,100,64.0,54.24,72.73
+libero_object,10,88,100,88.0,80.19,93.00
+libero_object,50,59,100,59.0,49.20,68.13
